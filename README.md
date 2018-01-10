@@ -1,6 +1,8 @@
 # Vue DamnTimepicker
 A simple and configurable time picker for Vue2.
 
+[![Coverage Status](https://coveralls.io/repos/github/fazendo-programa/vue-damn-timepicker/badge.svg?branch=master)](https://coveralls.io/github/fazendo-programa/vue-damn-timepicker?branch=master)
+
 # Build Setup
 
 ``` bash
