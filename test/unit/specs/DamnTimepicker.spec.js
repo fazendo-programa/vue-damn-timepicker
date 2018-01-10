@@ -12,7 +12,7 @@ describe('DamnTimepicker.vue', () => {
 
 	describe('#upperLimit', () => {
 		it('parses a valid ISO string', () => {
-			const ISOString = '2018-01-09T09:00:00.000-02:00'
+			const ISOString = '2018-01-09T09:00:00.000Z'
 			vm = vmWithProps({ upperLimitISO: ISOString })
 
 			expect(vm.upperLimit.isValid).toEqual(true)
@@ -20,23 +20,19 @@ describe('DamnTimepicker.vue', () => {
 		})
 
 		it('is invalid for empty', () => {
-			const ISOString = '2018-01-09T09:00:00.000-02:00'
 			vm = vmWithProps({ upperLimitISO: undefined })
-
 			expect(vm.upperLimit.isValid).toEqual(false)
 		})
 
 		it('is invalid for a non-ISO date', () => {
-			const ISOString = '2018-01-09T09:00:00.000-02:00'
 			vm = vmWithProps({ upperLimitISO: 'abc' })
-
 			expect(vm.upperLimit.isValid).toEqual(false)
 		})
 	})
 
 	describe('#lowerLimit', () => {
 		it('parses a valid ISO string', () => {
-			const ISOString = '2018-01-09T09:00:00.000-02:00'
+			const ISOString = '2018-01-09T09:00:00.000Z'
 			vm = vmWithProps({ lowerLimitISO: ISOString })
 
 			expect(vm.lowerLimit.isValid).toEqual(true)
@@ -44,16 +40,12 @@ describe('DamnTimepicker.vue', () => {
 		})
 
 		it('is invalid for empty', () => {
-			const ISOString = '2018-01-09T09:00:00.000-02:00'
 			vm = vmWithProps({ lowerLimitISO: undefined })
-
 			expect(vm.lowerLimit.isValid).toEqual(false)
 		})
 
 		it('is invalid for a non-ISO date', () => {
-			const ISOString = '2018-01-09T09:00:00.000-02:00'
 			vm = vmWithProps({ lowerLimitISO: 'abc' })
-
 			expect(vm.lowerLimit.isValid).toEqual(false)
 		})
 	})

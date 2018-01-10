@@ -30,16 +30,20 @@ export default {
 	},
 
 	props: {
+		// The picker timezone
+		zone: {
+			type: String,
+			default: 'UTC'
+		},
+
 		// The earliest a time can be selected
 		upperLimitISO: {
-			type: String,
-			required: false
+			type: String
 		},
 
 		// The latest a time can be selected
 		lowerLimitISO: {
-			type: String,
-			required: false
+			type: String
 		}
 	},
 
@@ -50,7 +54,7 @@ export default {
 		 * @return {DateTime}
 		 */
 		upperLimit() {
-			return DateTime.fromISO(this.upperLimitISO)
+			return DateTime.fromISO(this.upperLimitISO, { zone: this.zone })
 		},
 
 		/**
@@ -59,7 +63,7 @@ export default {
 		 * @return {DateTime}
 		 */
 		lowerLimit() {
-			return DateTime.fromISO(this.lowerLimitISO)
+			return DateTime.fromISO(this.lowerLimitISO, { zone: this.zone })
 		},
 
 		/**
