@@ -6,4 +6,4 @@ install:
   - npm install
 
 script:
-  - npm run unit
+  - npm run test-ci
