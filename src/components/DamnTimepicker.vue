@@ -44,6 +44,12 @@ export default {
 		// The latest a time can be selected
 		lowerLimitISO: {
 			type: String
+		},
+
+		// Step multiplier for the minutes
+		minuteStep: {
+			type: Number,
+			default: 1
 		}
 	},
 
@@ -71,7 +77,18 @@ export default {
 		 * @return {Array<Integer>}
 		 */
 		hoursInDay() {
-			const hours = this.integerArray(24)
+			let hours = this.integerArray(24)
+
+			if (this.upperLimit.isValid) {
+				const upperHour = this.upperLimit.hour
+				hours = hours.filter(h => h <= upperHour)
+			}
+
+			if (this.lowerLimit.isValid) {
+				const lowerHour = this.lowerLimit.hour
+				hours = hours.filter(h => h >= lowerHour)
+			}
+
 			return hours
 		},
 
@@ -80,8 +97,8 @@ export default {
 		 * @return {Array<Integer>}
 		 */
 		minutesInDay() {
-			const minutes = this.integerArray(60, 1)
-			return minutes
+			const minutes = this.integerArray(60)
+			return minutes.filter(m => (m % this.minuteStep) === 0)
 		}
 	},
 

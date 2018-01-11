@@ -55,12 +55,43 @@ describe('DamnTimepicker.vue', () => {
 			const hours = vm.hoursInDay
 			expect(hours.length).toEqual(24)
 		})
+
+		it('filters by upperLimit', () => {
+			vm = vmWithProps({ upperLimitISO: '2018-01-11T06:00:00.000Z' })
+
+			expect(vm.hoursInDay.length).toEqual(7)
+			expect(vm.hoursInDay).toEqual([0,1,2,3,4,5,6])
+		})
+
+		it('filters by lowerLimit', () => {
+			vm = vmWithProps({ lowerLimitISO: '2018-01-11T17:00:00.000Z' })
+
+			expect(vm.hoursInDay.length).toEqual(7)
+			expect(vm.hoursInDay).toEqual([17,18,19,20,21,22,23])
+		})
+
+		it('does not break for invalid upperLimitISO', () => {
+			vm = vmWithProps({ upperLimitISO: '2018-01-11T7:00:00.000Z' })
+			expect(vm.hoursInDay.length).toEqual(24)
+		})
+
+		it('does not break for invalid lowerLimitISO', () => {
+			vm = vmWithProps({ lowerLimitISO: '2018-01-11T7:00:00.000Z' })
+			expect(vm.hoursInDay.length).toEqual(24)
+		})
 	})
 
 	describe('#minutesInDay', () => {
 		it('has a list of all minutes in day', () => {
 			const minutes = vm.minutesInDay
 			expect(minutes.length).toEqual(60)
+		})
+
+		it('filters by the minute step', () => {
+			vm = vmWithProps({ minuteStep: 10 })
+
+			expect(vm.minutesInDay.length).toEqual(6)
+			expect(vm.minutesInDay).toEqual([0,10,20,30,40,50])
 		})
 	})
 
