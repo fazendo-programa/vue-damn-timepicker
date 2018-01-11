@@ -80,7 +80,7 @@ export default {
 		 * @return {Array<Integer>}
 		 */
 		minutesInDay() {
-			const minutes = this.integerArray(60)
+			const minutes = this.integerArray(60, 1)
 			return minutes
 		}
 	},
@@ -91,10 +91,12 @@ export default {
 		 * with the length of numberOfItems
 		 * @param numberOfItems {Integer} Lenth of the array
 		 *   in the array
+		 * @param offset {Integer} By how much should each entry
+		 *   be offset by
 		 * @return {Array<Integer>}
 		 */
-		integerArray(numberOfItems) {
-			return Array(numberOfItems).fill().map((x, i) => i + 1)
+		integerArray(numberOfItems, offset = 0) {
+			return Array(numberOfItems).fill().map((x, i) => i + offset)
 		}
 	}
 }
