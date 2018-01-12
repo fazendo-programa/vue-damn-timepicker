@@ -124,6 +124,14 @@ describe('DamnTimepicker.vue', () => {
 			expect(hour).toEqual(vm.upperLimit.hour)
 		})
 
+		it('returns the lower limit hour if invialid', () => {
+			vm = vmWithProps({ lowerLimitISO: '2018-01-11T21:00:00.000Z' }) // 9PM
+			const date = DateTime.fromISO('2018-01-11T22:00:00.000Z', { zone: vm.zone }) // 10PM
+			const hour = vm.findAvailableHour(date)
+
+			expect(hour).toEqual(vm.lowerLimit.hour)
+		})
+
 		it('returns the date\'s hour if valid', () => {
 			vm = vmWithProps({ upperLimitISO: '2018-01-11T08:00:00.000Z' }) // 8AM
 			const date = DateTime.fromISO('2018-01-11T09:00:00.000Z', { zone: vm.zone }) // 9AM

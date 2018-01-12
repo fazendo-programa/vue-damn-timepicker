@@ -141,17 +141,18 @@ export default {
 		 * @return      {Integer}  Available hour for date
 		 */
 		findAvailableHour(date) {
-			if (!this.upperLimit.isValid) { return date.hour }
-
-			const thisHour = date.hour
+			const thisHour  = date.hour
 			const firstHour = this.upperLimit.hour
+			const lastHour  = this.lowerLimit.hour
 
-			if (thisHour > firstHour) {
-				return thisHour
-			} else {
+			if (firstHour != NaN && firstHour > thisHour) {
 				return firstHour
+			} else if (lastHour != NaN && lastHour < thisHour) {
+				return lastHour
+			} else {
+				return thisHour
 			}
-		}
+		},
 	}
 }
 </script>
