@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { DateTime } from 'luxon'
 import DamnTimepicker from '@/components/DamnTimepicker'
 
 describe('DamnTimepicker.vue', () => {
@@ -92,6 +93,43 @@ describe('DamnTimepicker.vue', () => {
 
 			expect(vm.minutesInDay.length).toEqual(6)
 			expect(vm.minutesInDay).toEqual([0,10,20,30,40,50])
+		})
+	})
+
+	describe('#integerArray', () => {
+		it('returns an array of integers', () => {
+			const integers = vm.integerArray(5)
+			expect(integers).toEqual([0,1,2,3,4])
+		})
+
+		it('accepts an offset', () => {
+			const integers = vm.integerArray(5, 5)
+			expect(integers).toEqual([5,6,7,8,9])
+		})
+	})
+
+	describe('#findAvailableHour', () => {
+		it('returns the date\'s hour if no upper limit', () => {
+			const date = DateTime.local()
+			const hour = vm.findAvailableHour(date)
+
+			expect(hour).toEqual(date.hour)
+		})
+
+		it('returns the upper limit hour if invalid', () => {
+			vm = vmWithProps({ upperLimitISO: '2018-01-11T09:00:00.000Z' }) // 9AM
+			const date = DateTime.fromISO('2018-01-11T08:00:00.000Z', { zone: vm.zone }) // 8AM
+			const hour = vm.findAvailableHour(date)
+
+			expect(hour).toEqual(vm.upperLimit.hour)
+		})
+
+		it('returns the date\'s hour if valid', () => {
+			vm = vmWithProps({ upperLimitISO: '2018-01-11T08:00:00.000Z' }) // 8AM
+			const date = DateTime.fromISO('2018-01-11T09:00:00.000Z', { zone: vm.zone }) // 9AM
+			const hour = vm.findAvailableHour(date)
+
+			expect(hour).toEqual(date.hour)
 		})
 	})
 

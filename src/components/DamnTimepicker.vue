@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<select>
+		<select v-model="dateHour">
 			<option
 				v-for='hour in hoursInDay'
 				:key='hour'>
@@ -8,7 +8,7 @@
 			</option>
 		</select>
 
-		<select>
+		<select v-model="dateMinute">
 			<option
 				v-for='minute in minutesInDay'
 				:key='minute'>
@@ -25,7 +25,9 @@ export default {
 	name: 'DamnTimepicker',
 	data() {
 		return {
-			date: DateTime.local()
+			date: undefined,
+			dateHour: undefined,
+			dateMinute: undefined
 		}
 	},
 
@@ -64,7 +66,7 @@ export default {
 		},
 
 		/**
-		 * Calculates the lower limit (lates a time can be selected)
+		 * Calculates the lower limit (latest a time can be selected)
 		 * based on the upperLimitISO prop.
 		 * @return {DateTime}
 		 */
@@ -99,7 +101,22 @@ export default {
 		minutesInDay() {
 			const minutes = this.integerArray(60)
 			return minutes.filter(m => (m % this.minuteStep) === 0)
+
+			// if (this.upperLimit.isValid) {
+
+			// }
+
+			// if (this.lowerLimit.isValid) {
+
+			// }
 		}
+	},
+
+	created() {
+		var now = DateTime.local()
+		this.date = now
+		this.dateHour = now.hour
+		this.dateMinute = now.minute
 	},
 
 	methods: {
@@ -114,6 +131,26 @@ export default {
 		 */
 		integerArray(numberOfItems, offset = 0) {
 			return Array(numberOfItems).fill().map((x, i) => i + offset)
+		},
+
+		/**
+		 * Returns the date's hour, unless it is not valid. In this
+		 * case returns the first availalbe hour, using upperLimit to
+		 * find that.
+		 * @param  date {DateTime} Date to find the available hour for
+		 * @return      {Integer}  Available hour for date
+		 */
+		findAvailableHour(date) {
+			if (!this.upperLimit.isValid) { return date.hour }
+
+			const thisHour = date.hour
+			const firstHour = this.upperLimit.hour
+
+			if (thisHour > firstHour) {
+				return thisHour
+			} else {
+				return firstHour
+			}
 		}
 	}
 }
