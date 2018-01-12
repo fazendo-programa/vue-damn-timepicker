@@ -2,8 +2,8 @@
 	<div id="app">
 		<DamnTimepicker
 			:minuteStep="15"
-			:upperLimitISO="'2018-01-11T20:00:00.000Z'"
-			:lowerLimitISO="'2018-01-1109:00:00.000Z'" />
+			:earlyLimitISO="'2018-01-11T09:00:00.000Z'"
+			:lateLimitISO="'2018-01-11T20:00:00.000Z'" />
 	</div>
 </template>
 

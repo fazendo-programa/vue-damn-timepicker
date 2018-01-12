@@ -39,12 +39,12 @@ export default {
 		},
 
 		// The earliest a time can be selected
-		upperLimitISO: {
+		earlyLimitISO: {
 			type: String
 		},
 
 		// The latest a time can be selected
-		lowerLimitISO: {
+		lateLimitISO: {
 			type: String
 		},
 
@@ -57,21 +57,21 @@ export default {
 
 	computed: {
 		/**
-		 * Calculates the upper limit (earliest a time can be selected)
-		 * based on the upperLimitISO prop.
+		 * Calculates the early limit based on the
+		 * earlyLimitISO prop.
 		 * @return {DateTime}
 		 */
-		upperLimit() {
-			return DateTime.fromISO(this.upperLimitISO, { zone: this.zone })
+		earlyLimit() {
+			return DateTime.fromISO(this.earlyLimitISO, { zone: this.zone })
 		},
 
 		/**
-		 * Calculates the lower limit (latest a time can be selected)
-		 * based on the upperLimitISO prop.
+		 * Calculates the late limit based on the
+		 * lateLimitISO prop.
 		 * @return {DateTime}
 		 */
-		lowerLimit() {
-			return DateTime.fromISO(this.lowerLimitISO, { zone: this.zone })
+		lateLimit() {
+			return DateTime.fromISO(this.lateLimitISO, { zone: this.zone })
 		},
 
 		/**
@@ -81,14 +81,14 @@ export default {
 		hoursInDay() {
 			let hours = this.integerArray(24)
 
-			if (this.upperLimit.isValid) {
-				const upperHour = this.upperLimit.hour
-				hours = hours.filter(h => h <= upperHour)
+			if (this.earlyLimit.isValid) {
+				const earlyHour = this.earlyLimit.hour
+				hours = hours.filter(h => h >= earlyHour)
 			}
 
-			if (this.lowerLimit.isValid) {
-				const lowerHour = this.lowerLimit.hour
-				hours = hours.filter(h => h >= lowerHour)
+			if (this.lateLimit.isValid) {
+				const lateHour = this.lateLimit.hour
+				hours = hours.filter(h => h <= lateHour)
 			}
 
 			return hours
@@ -99,24 +99,25 @@ export default {
 		 * @return {Array<Integer>}
 		 */
 		minutesInDay() {
-			const minutes = this.integerArray(60)
-			return minutes.filter(m => (m % this.minuteStep) === 0)
+			let minutes = this.possibleMinutes(60, this.minuteStep)
 
-			// if (this.upperLimit.isValid) {
-
+			// if (this.earlyLimit.isValid && this.date.hour === this.earlyLimit.hour) {
+			// 	minutes = minutes.filter(m => m > this.earlyLimit.minute)
 			// }
 
-			// if (this.lowerLimit.isValid) {
-
+			// if (this.lateLimite.isValid && this.date.hour === this.lateLimit.hour) {
+			// 	minutes = minutes.filter(m => m < this.lateLimit.minute)
 			// }
+
+			return minutes
 		}
 	},
 
 	created() {
 		var now = DateTime.local()
 		this.date = now
-		this.dateHour = now.hour
-		this.dateMinute = now.minute
+		this.dateHour = this.findAvailableHour(now)
+		this.dateMinute = this.findAvailableMinute(now)
 	},
 
 	methods: {
@@ -134,25 +135,72 @@ export default {
 		},
 
 		/**
+		 * All possible minutes, given the number of
+		 * minutes and the step size.
+		 * @param   minutes {Number} Number of minutes
+		 *                             to calculate
+		 * @param  step     {Number} Step size
+		 * @return {Array<Number>}
+		 */
+		possibleMinutes(minutes, step) {
+			return this.integerArray(minutes)
+				.filter(m => (m % step) === 0)
+		},
+
+		/**
 		 * Returns the date's hour, unless it is not valid. In this
-		 * case returns the first availalbe hour, using upperLimit to
+		 * case returns the first availalbe hour, using limits to
 		 * find that.
 		 * @param  date {DateTime} Date to find the available hour for
 		 * @return      {Integer}  Available hour for date
 		 */
 		findAvailableHour(date) {
-			const thisHour  = date.hour
-			const firstHour = this.upperLimit.hour
-			const lastHour  = this.lowerLimit.hour
+			const thisHour = date.hour
+			const earlyHour = this.earlyLimit.hour
+			const lateHour = this.lateLimit.hour
 
-			if (firstHour != NaN && firstHour > thisHour) {
-				return firstHour
-			} else if (lastHour != NaN && lastHour < thisHour) {
-				return lastHour
+			if (!isNaN(earlyHour) && earlyHour > thisHour) {
+				return earlyHour
+			} else if (!isNaN(lateHour) && lateHour < thisHour) {
+				return lateHour
 			} else {
 				return thisHour
 			}
 		},
+
+		/**
+		 * Returns the date's minute, unless it is not valid. In this
+		 * caes returns the first available minute, using limits to
+		 * find that.
+		 * @param  date {DateTime} Date to find the available minute for
+		 * @return      {Integer|Boolean}  Available minute for date,
+		 *                                   false if date has no possible
+		 *                                   available minute.
+		 */
+		findAvailableMinute(date) {
+			const thisHour = date.hour
+			const earlyHour = this.earlyLimit.hour
+			const lateHour = this.lateLimit.hour
+
+			const thisMinute = date.minute
+			const firstMinute = this.earlyLimit.minute
+			const lastMinute = this.lateLimit.minute
+
+			let minute = null
+			if (thisHour > earlyHour && lateHour > thisHour) {
+				return thisMinute
+			} else if (earlyHour === thisHour && firstMinute > thisMinute) {
+				return firstMinute
+			} else if (earlyHour === thisHour && firstMinute < thisMinute) {
+				return thisMinute
+			} else if (lateHour === thisHour && lastMinute < thisMinute) {
+				return lastMinute
+			} else if (lateHour === thisHour && lastMinute > thisMinute) {
+				return thisMinute
+			} else {
+				return thisMinute
+			}
+		}
 	}
 }
 </script>
